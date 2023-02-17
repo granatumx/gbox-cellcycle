@@ -60,7 +60,14 @@ def main():
     gn.export_statically(dict(zip(adata.obs["phase"].index, adata.obs["phase"].tolist())), "Cell cycle phase labels")
     gn.export(adata.obs["phase"].to_csv(), "CellCyclePhase.csv", kind='raw', meta=None, raw=True)
     gn.export(reporting_df.to_csv(), "CellCycleGeneMatrix.csv", kind='raw', meta=None, raw=True)
-    gn.export(ann_to_df(adata_cc_genes), "Cell Cycle Assay", "assay")
+
+    tb = ann_to_df(adata_cc_genes).T
+    exported_assay = {
+        "matrix": tb.values.tolist(),
+        "sampleIds": tb.columns.values.tolist(),
+        "geneIds": tb.index.values.tolist(),
+    }
+    gn.export(exported_assay, "Cell Cycle Assay", "assay")
     
 
     # Append timing information
