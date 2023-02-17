@@ -10,6 +10,7 @@ from random import randrange
 import re
 import sys
 import scanpy as sc
+import matplotlib as mpl
 
 from granatum_sdk import Granatum
 
@@ -33,6 +34,7 @@ def main():
     adata = sc.AnnData(assay, dtype=np.float64)
 
     configure_plotting()
+    mpl.rcParams["legend.loc"] = "upper center"
 
     sgenes = [x.strip() for x in open('./data/sgenes.txt')]
     g2mgenes = [x.strip() for x in open('./data/g2mgenes.txt')]
@@ -46,9 +48,12 @@ def main():
     sc.pl.pca_scatter(adata_cc_genes, color='phase')
     gn.add_current_figure_to_results('PCA Scatter Plot of Cell Cycle Phases')
 
+    reporting_df = pd.concat([adata.obs["phase"], adata_cc_genes], axis=1)
+    gn.add_pandas_df(reporting_df.reset_index())
+
     gn.export_statically(dict(zip(adata.obs["phase"].index, adata.obs["phase"].tolist())), "Cell cycle phase labels")
     gn.export(adata.obs["phase"].to_csv(), "CellCyclePhase.csv", kind='raw', meta=None, raw=True)
-
+    gn.export(reporting_df.to_csv(), "CellCycleGeneMatrix.csv", kind='raw', meta=None, raw=True)
     
 
     # Append timing information
