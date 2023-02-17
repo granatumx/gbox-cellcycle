@@ -11,7 +11,6 @@ from random import randrange
 import re
 import sys
 import scanpy as sc
-import matplotlib as mpl
 
 from granatum_sdk import Granatum
 
@@ -41,7 +40,6 @@ def main():
     adata = sc.AnnData(assay, dtype=np.float64)
 
     configure_plotting()
-    mpl.rcParams["legend.loc"] = "upper center"
 
     sgenes = [x.strip() for x in open('./data/sgenes.txt')]
     g2mgenes = [x.strip() for x in open('./data/g2mgenes.txt')]
@@ -53,6 +51,7 @@ def main():
     adata_cc_genes = adata[:, cellcyclegenes]
     sc.tl.pca(adata_cc_genes)
     sc.pl.pca_scatter(adata_cc_genes, color='phase')
+    plt.legend(loc="upper center")
     gn.add_current_figure_to_results('PCA Scatter Plot of Cell Cycle Phases')
 
     reporting_df = pd.concat([adata.obs["phase"], ann_to_df(adata_cc_genes)], axis=1)
