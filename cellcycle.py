@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import statistics as st
+import scipy as sp
 import time
 from random import randrange
 import re
@@ -22,6 +23,12 @@ def parse(st):
 def configure_plotting(dpi=100, fontsize=10, dpi_save=300, figsize=(5,4)):
     sc.settings.set_figure_params(dpi=dpi, fontsize=fontsize, dpi_save=dpi_save, figsize=figsize, format='png')
 
+
+# Create a dataframe from an ann
+def ann_to_df(adata):
+    if sp.sparse.issparse(adata.X):
+        return pd.DataFrame.sparse.from_spmatrix(data=adata.X, index=adata.obs_names.to_list(), columns=adata.var_names.to_list())
+    return pd.DataFrame(data=adata.X, index=adata.obs_names.to_list(), columns=adata.var_names.to_list())
 
 def main():
     tic = time.perf_counter()
@@ -48,7 +55,7 @@ def main():
     sc.pl.pca_scatter(adata_cc_genes, color='phase')
     gn.add_current_figure_to_results('PCA Scatter Plot of Cell Cycle Phases')
 
-    reporting_df = pd.concat([adata.obs["phase"], adata_cc_genes], axis=1)
+    reporting_df = pd.concat([adata.obs["phase"], ann_to_df(adata_cc_genes)], axis=1)
     gn.add_pandas_df(reporting_df.reset_index())
 
     gn.export_statically(dict(zip(adata.obs["phase"].index, adata.obs["phase"].tolist())), "Cell cycle phase labels")
