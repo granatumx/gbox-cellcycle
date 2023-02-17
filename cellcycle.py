@@ -51,7 +51,7 @@ def main():
     adata_cc_genes = adata[:, cellcyclegenes]
     sc.tl.pca(adata_cc_genes)
     sc.pl.pca_scatter(adata_cc_genes, color='phase')
-    plt.legend(loc="upper center")
+    plt.legend(loc="upper right")
     gn.add_current_figure_to_results('PCA Scatter Plot of Cell Cycle Phases')
 
     reporting_df = pd.concat([adata.obs["phase"], ann_to_df(adata_cc_genes)], axis=1)
