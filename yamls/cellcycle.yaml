@@ -1,0 +1,22 @@
+id: CellCycle-{VER}
+meta:
+  title: Cell Cycle Human {VER}
+  subtitle: >-
+    This gbox provides the ability to create the G1, G2M, and S phases for cells as sample metadata.
+  description: >
+    Given logged and filtered data input, this GBOX can follow the tools provided by [Seurat](http://satijalab.org/seurat) and [scanpy](https://scanpy.readthedocs.io/en/stable/).
+    It employs the approach given in (Cell-Cycle Scoring and Regression)[https://github.com/scverse/scanpy_usage/blob/master/180209_cell_cycle/cell_cycle.ipynb] with the updated gene lists provided by [Seurat v4.3](https://satijalab.org/seurat/reference/cc.genes.html). Please cite all relevant references and observe the licenses provided by each of these packages. 
+endpoints:
+  backend:
+    cmd: python ./cellcycle.py
+    type: docker
+    image: {GBOX}
+frontend:
+  imports:
+    - kind: assay
+      label: Human log normalized and filtered assay to use
+      injectInto: assay
+  exports:
+    - kind: sampleMeta
+      meta: {}
+      extractFrom: Cell cycle phase labels
